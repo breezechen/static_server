@@ -38,6 +38,8 @@ addr = '0.0.0.0'
 fsencoding = sys.getfilesystemencoding()
 decoding = (fsencoding.lower() != 'utf-8')
 
+CACHE_SIZE = 4 * 1024 * 1024
+
 def size_str(bytes):
     bytes = float(bytes)
     if bytes >= 1099511627776:
@@ -68,12 +70,12 @@ def http_server(sock, addr):
         filepath = os.path.join(doc_root, uri)
         if os.path.isfile(filepath):
             size = os.path.getsize(filepath)
-            sock.send(build_header(guess_type(filepath)[0], os.path.getsize(filepath)))
+            sock.sendall(build_header(guess_type(filepath)[0], os.path.getsize(filepath)))
             with open(filepath, 'rb') as infile:
-                data = infile.read(4096)
+                data = infile.read(CACHE_SIZE)
                 while data:
                     sock.sendall(data)
-                    data = infile.read(4096)
+                    data = infile.read(CACHE_SIZE)
 
         elif os.path.isdir(filepath):
             contents = os.listdir(filepath)
@@ -171,11 +173,11 @@ def parse_cmd():
     global doc_root, port, addr
     arvc = len(sys.argv)
     if arvc > 4 or arvc == 1 or (arvc == 2 and (sys.argv[1] == '-h' or sys.argv[1] == '--help')):
-        print 'python static_server.py address port doc_root'
+        print 'python server.py address port doc_root'
         print '  For IPv4, try:\n'
-        print '    python static_server.py 0.0.0.0 80 .\n'
+        print '    python server.py 0.0.0.0 80 .\n'
         print '  For IPv6, try:\n'
-        print '    python static_server.py 0::0 80 .\n'
+        print '    python server.py 0::0 80 .\n'
         exit(1)
     if arvc > 3:
         doc_root = sys.argv[3]
@@ -183,13 +185,13 @@ def parse_cmd():
         port = int(sys.argv[2])
     if arvc > 1:
         addr = sys.argv[1]
-    print doc_root
+
 
 def main():
     parse_cmd()
     patch_all()
     server = StreamServer((addr, port), http_server)
-    print('Starting server on %s:%d, doc_root:%s' % (addr, port, doc_root))
+    print('Starting server on %s:%d, doc_root==>%s' % (addr, port, doc_root))
     server.serve_forever()
 
 if __name__ == '__main__':

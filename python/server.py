@@ -70,8 +70,10 @@ def http_server(sock, addr):
             size = os.path.getsize(filepath)
             sock.send(build_header(guess_type(filepath)[0], os.path.getsize(filepath)))
             with open(filepath, 'rb') as infile:
-                while True:
-                    sock.send(infile.read(4096))
+                data = infile.read(4096)
+                while data:
+                    sock.sendall(data)
+                    data = infile.read(4096)
 
         elif os.path.isdir(filepath):
             contents = os.listdir(filepath)

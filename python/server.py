@@ -67,7 +67,9 @@ def http_server(sock, addr):
         msg = receive_message(sock)
         uri = unquote(parse_request(msg))
 
-        filepath = os.path.join(doc_root, uri)
+        filepath = os.path.join(doc_root, uri[1:])
+        if filepath.find(doc_root) != 0:
+            filepath = doc_root
         if os.path.isfile(filepath):
             size = os.path.getsize(filepath)
             sock.sendall(build_header(guess_type(filepath)[0], os.path.getsize(filepath)))

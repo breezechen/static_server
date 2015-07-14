@@ -48,7 +48,7 @@ std::string request_handler::format_time(std::time_t t)
 
 std::string request_handler::size_string(boost::uint64_t bytes)
 {
-	static const char* c[] = { "B", "KB", "MB", "GB", "TB"};
+	static const char* c[] = { "B", "K", "M", "G", "T"};
 	static const boost::uint64_t u[] = { 1, 1 << 10, 1 << 20, 1 << 30, 1 << 40 };
 	int i;
 	boost::uint64_t test = bytes;
@@ -174,18 +174,18 @@ void request_handler::handle_request(const request& req, reply& rep)
 			}
 			else 
 			{
-				std::ostringstream stringStream;
-				stringStream << html_str << std::endl;
-				stringStream << "<script>start(\"" << request_path << "\");</script>" << std::endl;
-
-				if (request_path.length() > 1)
+				std::vector<file_info> fileinfos;
 				{
-					stringStream << "<script>addRow(\"..\", \"..\", 1, \"0 B\", \"\"); </script>" << std::endl;
+					file_info finfo;
+					finfo.filename = request_path;
+					finfo.is_folder = true;
+					finfo.url = url_encode(request_path);
+					finfo.size = "";
+					finfo.date = "";
+					fileinfos.push_back(finfo);
 				}
 
 				std::vector<boost::filesystem::path> files;
-
-
 				std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(files));
 				std::sort(files.begin(), files.end(), compare_nocase);
 
@@ -196,20 +196,18 @@ void request_handler::handle_request(const request& req, reply& rep)
 						if (boost::filesystem::is_directory(*it))
 						{
 							std::time_t mtime = boost::filesystem::last_write_time(*it); 
-							std::string name = it->filename().string();
-#ifdef WIN32
-							name = ansi_to_utf8(name);
-#endif // WIN32
 
-							stringStream << "<script>addRow(\"" << name << "\",\"" << url_encode(name) << "\",";
-							stringStream << "1, \"0 B\", ";
-							stringStream << "\"" << format_time(mtime) << "\"" << ");</script>" << std::endl;
+							file_info finfo;
+							finfo.is_folder = true;
+							finfo.filename = it->filename().string();
+							finfo.url = url_encode(finfo.filename);
+							finfo.size = "";
+							finfo.date = format_time(mtime);
+							fileinfos.push_back(finfo);
 						}
 					}
 					catch (...) {}
 				}
-
-
 
 				for (std::vector<boost::filesystem::path>::const_iterator it(files.begin()); it != files.end(); ++it)
 				{
@@ -218,19 +216,24 @@ void request_handler::handle_request(const request& req, reply& rep)
 						if (boost::filesystem::is_regular_file(*it))
 						{
 							std::time_t mtime = boost::filesystem::last_write_time(*it); 
-							std::string name = it->filename().string();
-#ifdef WIN32
-							name = ansi_to_utf8(name);
-#endif // WIN32
-							stringStream << "<script>addRow(\"" << name << "\",\"" << url_encode(name) << "\",";
-							stringStream << "0, \"" << size_string(boost::filesystem::file_size(*it)) << "\", ";
-							stringStream << "\"" << format_time(mtime) << "\"" << ");</script>" << std::endl;
+
+							file_info finfo;
+							finfo.is_folder = false;
+							finfo.filename = it->filename().string();
+							finfo.url = url_encode(finfo.filename);
+							finfo.size = size_string(boost::filesystem::file_size(*it));
+							finfo.date = format_time(mtime);
+							fileinfos.push_back(finfo);
 						}
 					}
 					catch (...) {}
 				}
 
-				rep.content.append(stringStream.str());
+#ifdef WIN32
+				rep.content.append(ansi_to_utf8(file_contents_to_html(fileinfos)));
+#else
+				rep.content.append(file_contents_to_html(fileinfos));
+#endif
 				rep.status = reply::ok;
 				rep.headers.resize(2);
 				rep.headers[0].name = "Content-Length";

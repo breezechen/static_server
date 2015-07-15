@@ -17,3 +17,8 @@ script:
     - mkdir _builds
     - cd c++
     - g++ *.cpp -o ../_builds/server -pthread -lboost_system -lboost_filesystem -lboost_thread -lrt -O2 -DNDEBUG
+    - cd ../_builds
+    - file server
+    - ldd server
+    - cd ..
+    - ./server 0.0.0.0 9527 4 .

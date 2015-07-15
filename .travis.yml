@@ -16,4 +16,4 @@ install:
 script:
     - mkdir _builds
     - cd c++
-    - g++ *.cpp -o ../_builds/server -pthread -lrt -lboost_system -lboost_filesystem -lboost_thread -O2 -DNDEBUG
+    - g++ *.cpp -o ../_builds/server -pthread -lboost_system -lboost_filesystem -lboost_thread -lrt -O2 -DNDEBUG

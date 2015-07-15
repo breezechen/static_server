@@ -11,9 +11,9 @@ before_install:
     - tar zxf boost_1_58_0.tar.gz --strip-components=1 -C $BOOST_ROOT
 
 install: 
-    - (cd $BOOST_ROOT; ./bootstrap.sh --with-libraries=date_time,system,filesystem,thread)
+    - (cd $BOOST_ROOT; ./bootstrap.sh --with-libraries=system,filesystem,thread)
     - (cd $BOOST_ROOT; sudo ./b2 threading=multi link=static runtime-link=static --prefix=/usr/local -d0 install)
 script:
     - mkdir _builds
     - cd c++
-    - g++ *.cpp -o ../_builds/server -pthread -lboost_system -lboost_filesystem -lboost_thread -static -O2 -DNDEBUG
+    - g++ *.cpp -o ../_builds/server -pthread -lrt -lboost_system -lboost_filesystem -lboost_thread -static -O2 -DNDEBUG

@@ -20,5 +20,6 @@ script:
     - cd ../_builds
     - file server
     - ldd server
+    - ip addr
     - cd ..
-    - ./server 0.0.0.0 9527 4 .
+    - ./_builds/server 0.0.0.0 9527 4 .

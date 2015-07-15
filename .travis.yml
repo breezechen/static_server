@@ -5,7 +5,8 @@ compiler:
     - gcc
 
 before_install:
-    - sudo apt-get install libboost-dev
+    - sudo apt-get install aptitude
+    - aptitude search boost
 
 script:
     - mkdir _builds

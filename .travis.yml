@@ -1,0 +1,13 @@
+language:
+    - cpp
+
+compiler:
+    - gcc
+
+before_install:
+    - sudo apt-get install libboost-dev
+
+script:
+    - mkdir _builds
+    - cd c++
+    - g++ *.cpp -o ../_builds/server -pthread -lboost_system -lboost_filesystem -lboost_thread -static -O2 -DNDEBUG

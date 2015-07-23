@@ -1,5 +1,8 @@
 HttpDownloadServer
 ==================
+
+[![Build Status](https://travis-ci.org/breezechen/static_server.svg?branch=master)](https://travis-ci.org/breezechen/static_server)
+
 A cross-platform http static server based on boost asio example http server2. Now it's supporting large file(> 4G) download.
 
 how to build?

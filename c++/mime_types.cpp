@@ -18,7 +18,8 @@ struct mapping
 {
   const char* extension;
   const char* mime_type;
-} mappings[] =
+};
+mapping mappings[] =
 {
   { "323", "text/h323" },
   { "acx", "application/internet-property-stream" },
@@ -209,9 +210,24 @@ struct mapping
   { "zip", "application/zip" },
   { 0, 0 } // Marks end of list.
 };
+mapping custom_mappings[] =
+{
+  { "md5", "text/plain" },
+  { "sh", "text/plain" },
+  { "bash", "text/plain" },
+  { 0, 0 } // Marks end of list.
+};
 
 std::string extension_to_type(const std::string& extension)
 {
+  for (mapping* m = custom_mappings; m->extension; ++m)
+  {
+    if (m->extension == extension)
+    {
+      return m->mime_type;
+    }
+  }
+  
   for (mapping* m = mappings; m->extension; ++m)
   {
     if (m->extension == extension)

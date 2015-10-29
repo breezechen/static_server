@@ -24,7 +24,7 @@
 #include "reply.hpp"
 #include "request.hpp"
 #include "html.h"
-#include "custom_handler.hpp"
+#include "custom_handler.h"
 
 namespace http {
 namespace server2 {
@@ -49,11 +49,11 @@ std::string request_handler::format_time(std::time_t t)
 
 std::string request_handler::size_string(boost::uint64_t bytes)
 {
-	static const char* c[] = { "B", "K", "M", "G", "T"};
-	static const boost::uint64_t u[] = { 1, 1 << 10, 1 << 20, 1 << 30, 1 << 40 };
+	static const char* c[] = { "B", "K", "M", "G"};
+	static const boost::uint64_t u[] = { 1, 1 << 10, 1 << 20, 1 << 30};
 	int i;
 	boost::uint64_t test = bytes;
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < 4; i++)
 	{
 		test = test >> 10;
 		if (test <= 1) {
@@ -61,7 +61,7 @@ std::string request_handler::size_string(boost::uint64_t bytes)
 		}
 	}
 
-	if (i == 5) {
+	if (i == 4) {
 		i--;
 	}
 

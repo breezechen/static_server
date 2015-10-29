@@ -24,6 +24,7 @@
 #include "reply.hpp"
 #include "request.hpp"
 #include "html.h"
+#include "custom_handler.hpp"
 
 namespace http {
 namespace server2 {
@@ -135,12 +136,15 @@ std::string request_handler::utf8_to_ansi(const std::string& utf8)
 }
 #endif // WIN32
 
-
 void request_handler::handle_request(const request& req, reply& rep)
 {
 	reply::status_type s = reply::ok;
 	do 
 	{
+        if (handle_custom(req, rep)) {
+            break;
+        }
+
 		std::string request_path;
 		if (!url_decode(req.uri, request_path))
 		{

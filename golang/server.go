@@ -63,7 +63,6 @@ func listDir(rw http.ResponseWriter, req *http.Request, fpath string) {
 func rootHandler(rw http.ResponseWriter, req *http.Request) {
 	fpath, _ := filepath.Abs(path.Join(confRoot, req.URL.Path))
 	finfo, err := os.Stat(fpath)
-	log.Println(err)
 	if err != nil && os.IsNotExist(err) {
 		http.Error(rw, "404", http.StatusNotFound)
 	} else {

@@ -63,13 +63,9 @@ func listDir(rw http.ResponseWriter, req *http.Request, fpath string) {
 func rootHandler(rw http.ResponseWriter, req *http.Request) {
 	fpath, _ := filepath.Abs(path.Join(confRoot, req.URL.Path))
 	finfo, err := os.Stat(fpath)
+	log.Println(err)
 	if err != nil && os.IsNotExist(err) {
-		fname := path.Base(fpath)
-		if fname == "index.html" || fname == "index.htm" || fname == "index" {
-			listDir(rw, req, fpath)
-		} else {
-			http.Error(rw, "404", http.StatusNotFound)
-		}
+		http.Error(rw, "404", http.StatusNotFound)
 	} else {
 		if finfo.IsDir() {
 			listDir(rw, req, fpath)

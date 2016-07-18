@@ -89,7 +89,8 @@ func markdownHandler(rw http.ResponseWriter, req *http.Request, fpath string) {
 		blackfriday.EXTENSION_TITLEBLOCK |
 		blackfriday.EXTENSION_AUTO_HEADER_IDS |
 		blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
-		blackfriday.EXTENSION_DEFINITION_LISTS
+		blackfriday.EXTENSION_DEFINITION_LISTS |
+		blackfriday.EXTENSION_HARD_LINE_BREAK
 
 	fd, _ := os.Open(fpath)
 	defer fd.Close()

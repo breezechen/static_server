@@ -141,9 +141,11 @@ func markdownHandler(rw http.ResponseWriter, req *http.Request, fpath string) {
 
 	if len(tags) != 0 {
 		articleMeta.WriteString(`<i class="fa fa-tags"></i>`)
+		var tmp []string
 		for _, tag := range tags {
-			articleMeta.WriteString(fmt.Sprintf(`<a class="tag">%s</a>`, tag))
+			tmp = append(tmp, fmt.Sprintf(`<a class="tag">%s</a>`, tag))
 		}
+		articleMeta.WriteString(strings.Join(tmp, " | "))
 	}
 
 	text, _ := ioutil.ReadAll(freader)
@@ -840,7 +842,7 @@ articleMeta {
   background: #f7f7f7;
   color: #a2a2a2;
   border: 1px solid #ddd;
-  width: 980px;
+  width: 61.8%;
   margin-right:auto;
   margin-left:auto;
   display: block;
@@ -875,7 +877,7 @@ articleMeta .raw {
 
 article {
   border: 1px solid #ddd;
-  width:980px;
+  width: 61.8%;
   margin-right:auto;
   margin-left:auto;
   padding: 30px;

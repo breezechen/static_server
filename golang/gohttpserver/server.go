@@ -840,20 +840,18 @@ var mdCss = `
  */
 
 articleMeta {
-  background: #f7f7f7;
-  color: #a2a2a2;
   border: 1px solid #ddd;
-  width: 61.8%;
+  border-bottom: 0px;
+  padding-left: 30px;
+  padding-top: 9px;
+  padding-right: 30px;
+  padding-bottom: 10px;
   margin-right:auto;
   margin-left:auto;
-  display: block;
-  margin-top: 30px;
-  margin-bottom: 6px;
-  padding-left: 30px;
-  padding-right: 30px;
+  width: 61.8%;
   font-family: 微软雅黑;
-  padding-top:3px;
-  padding-bottom:3px;
+  display: block;
+  background: #f5f5f5;
 }
 
 articleMeta a {
@@ -904,6 +902,9 @@ article {
 }
 .markdown-body > *:last-child {
   margin-bottom: 0 !important;
+}
+.markdown-body a{
+  color: #4078c0;
 }
 .markdown-body a:not([href]) {
   color: inherit;

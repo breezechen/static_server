@@ -1164,6 +1164,7 @@ article {
   font-size: 85%;
   background-color: rgba(0, 0, 0, .04);
   border-radius: 3px;
+  font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
 }
 .markdown-body code:before, .markdown-body code:after,
     .markdown-body tt:before,

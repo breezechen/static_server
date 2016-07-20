@@ -234,6 +234,12 @@ var mdTemplate = `<!DOCTYPE html>
 <article class="markdown-body">
 {{.mdbody}}
 </article>
+<div class="comment">
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2107621"></script>
+<!-- UY END -->
+</div>
 </body>
 </html>`
 
@@ -873,7 +879,6 @@ articleMeta .raw {
   margin-top: 3px;
 }
 
-
 article {
   border: 1px solid #ddd;
   width: 61.8%;
@@ -881,6 +886,15 @@ article {
   margin-left:auto;
   padding: 30px;
 }
+
+.comment {
+  border: none;
+  width: 61.8%;
+  margin-right:auto;
+  margin-left:auto;
+  padding: 30px;
+}
+
 
 .markdown-body {
   font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";

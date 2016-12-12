@@ -38,6 +38,16 @@ func sizeString(size int64) string {
 	return fmt.Sprintf("%.2f %c", r, us[i])
 }
 
+func isHidden(dir string) bool {
+	tmp := path.Join(dir, ".hidden")
+	_, err := os.Stat(tmp)
+	if err != nil && os.IsNotExist(err) {
+		return false
+	} else {
+		return true
+	}
+}
+
 func listDir(rw http.ResponseWriter, req *http.Request, fpath string) {
 	fmt.Fprintln(rw, html)
 	fmt.Fprintf(rw, "<script>start(\"【%s】\");</script>\n", req.Host+req.URL.Path)
@@ -46,7 +56,9 @@ func listDir(rw http.ResponseWriter, req *http.Request, fpath string) {
 	var files, dirs []os.FileInfo
 	for _, f := range flist {
 		if f.IsDir() {
-			dirs = append(dirs, f)
+			if !isHidden(path.Join(fpath, f.Name())) {
+				dirs = append(dirs, f)
+			}
 		} else {
 			files = append(files, f)
 		}
@@ -188,7 +200,11 @@ func rootHandler(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, "404", http.StatusNotFound)
 	} else {
 		if finfo.IsDir() {
-			listDir(rw, req, fpath)
+			if isHidden(fpath) {
+				http.Error(rw, "404", http.StatusNotFound)
+			} else {
+				listDir(rw, req, fpath)
+			}
 		} else {
 			//fmt.Println(req.RequestURI)
 			if strings.HasSuffix(fpath, ".md") {
@@ -198,7 +214,12 @@ func rootHandler(rw http.ResponseWriter, req *http.Request) {
 					markdownHandler(rw, req, fpath)
 				}
 			} else {
-				http.ServeFile(rw, req, fpath)
+				dir := path.Dir(fpath)
+				if isHidden(dir) {
+					http.Error(rw, "404", http.StatusNotFound)
+				} else {
+					http.ServeFile(rw, req, fpath)
+				}
 			}
 		}
 	}

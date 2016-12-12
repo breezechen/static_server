@@ -206,17 +206,17 @@ func rootHandler(rw http.ResponseWriter, req *http.Request) {
 				listDir(rw, req, fpath)
 			}
 		} else {
-			//fmt.Println(req.RequestURI)
-			if strings.HasSuffix(fpath, ".md") {
-				if req.FormValue("raw") == "1" {
-					http.ServeFile(rw, req, fpath)
-				} else {
-					markdownHandler(rw, req, fpath)
-				}
+			dir := path.Dir(fpath)
+			if isHidden(dir) {
+				http.Error(rw, "404", http.StatusNotFound)
 			} else {
-				dir := path.Dir(fpath)
-				if isHidden(dir) {
-					http.Error(rw, "404", http.StatusNotFound)
+				//fmt.Println(req.RequestURI)
+				if strings.HasSuffix(fpath, ".md") {
+					if req.FormValue("raw") == "1" {
+						http.ServeFile(rw, req, fpath)
+					} else {
+						markdownHandler(rw, req, fpath)
+					}
 				} else {
 					http.ServeFile(rw, req, fpath)
 				}

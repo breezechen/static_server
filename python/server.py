@@ -44,19 +44,18 @@ def size_str(bytes):
     bytes = float(bytes)
     if bytes >= 1099511627776:
         terabytes = bytes / 1099511627776
-        size = '%.2f T' % terabytes
+        return '%.2f T' % terabytes
     elif bytes >= 1073741824:
         gigabytes = bytes / 1073741824
-        size = '%.2f G' % gigabytes
+        return '%.2f G' % gigabytes
     elif bytes >= 1048576:
         megabytes = bytes / 1048576
-        size = '%.2f M' % megabytes
+        return '%.2f M' % megabytes
     elif bytes >= 1024:
         kilobytes = bytes / 1024
-        size = '%.2f K' % kilobytes
+        return '%.2f K' % kilobytes
     else:
-        size = '%d B' % int(bytes)
-    return size
+        return '%d B' % int(bytes)
 
 def time_str(mtime):
     return datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
@@ -74,11 +73,8 @@ def http_server(sock, addr):
             size = os.path.getsize(filepath)
             sock.sendall(build_header(guess_type(filepath)[0], os.path.getsize(filepath)))
             with open(filepath, 'rb') as infile:
-                data = infile.read(CACHE_SIZE)
-                while data:
+                while data := infile.read(CACHE_SIZE):
                     sock.sendall(data)
-                    data = infile.read(CACHE_SIZE)
-
         elif os.path.isdir(filepath):
             contents = os.listdir(filepath)
             rep = html_str
@@ -114,13 +110,9 @@ def http_server(sock, addr):
         rep = e.message
         sock.sendall(build_header('text/plain', len(rep), e.code) + rep)
 
-    except:
-        rep = "500 Internal Server Error"
-        sock.sendall(build_header('text/plain', len(rep), '500') + rep)
-        pass
     finally:
-       sock.shutdown(socket.SHUT_WR)
-       sock.close()
+        sock.shutdown(socket.SHUT_WR)
+        sock.close()
 
 
 def receive_message(conn, buffsize=4096):
@@ -143,8 +135,7 @@ def parse_request(request):
     first_rn = request.find('\r\n')
     first_line = request[:first_rn]
     if first_line.split()[0] == 'GET':
-        uri = first_line.split()[1]
-        return uri
+        return first_line.split()[1]
     else:
         raise Error405("405: Method not allowed. Only GET is allowed.")
 
@@ -152,13 +143,14 @@ def parse_request(request):
 def build_header(mimetype, bytelen, code="200 OK"):
     """Build a response with the specified code and content."""
 
-    resp_list = []
-    resp_list.append('HTTP/1.1 %s' % code)
-    resp_list.append('Content-Type: %s; char=utf-8' % mimetype)
-    resp_list.append('Content-Length: %s' % str(bytelen))
-    resp_list.append('\r\n')
-    resp = '\r\n'.join(resp_list)
-    return resp
+    resp_list = [
+        f'HTTP/1.1 {code}',
+        f'Content-Type: {mimetype}; char=utf-8',
+        f'Content-Length: {str(bytelen)}',
+        '\r\n',
+    ]
+
+    return '\r\n'.join(resp_list)
 
 
 
